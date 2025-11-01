@@ -4,12 +4,16 @@ from __future__ import annotations
 
 import base64
 import datetime as dt
+import logging
 import uuid
 from dataclasses import dataclass
 from typing import Optional
 
 import requests
 import urllib3
+
+
+logger = logging.getLogger(__name__)
 
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
@@ -26,7 +30,7 @@ class GigaChatConfig:
     scope: str = "GIGACHAT_API_PERS"
     model: str = "GigaChat"
     timeout: float = 60.0
-    verify_ssl: bool | str = False  # замените сертификатом при необходимости
+    verify_ssl: bool | str = False  # Значение по умолчанию, если параметр не передан в GigaChatConfig. В продакшене задаётся через GIGACHAT_VERIFY_SSL в .env
 
 
 class GigaChatError(RuntimeError):

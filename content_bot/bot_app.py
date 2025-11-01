@@ -78,10 +78,18 @@ def create_app() -> TeleBot:
 
     bot = TeleBot(settings.telegram_bot_token, parse_mode="Markdown")
     state_manager = StateManager()
+
+    verify_ssl = settings.gigachat_verify_ssl
+    if verify_ssl is True:
+        logger.info("GigaChat client will use system certificate store for TLS verification")
+    elif isinstance(verify_ssl, str):
+        logger.info("GigaChat client will use custom CA bundle: %s", verify_ssl)
+
     gigachat = GigaChatClient(
         GigaChatConfig(
             client_id=settings.gigachat_client_id,
             client_secret=settings.gigachat_client_secret,
+            verify_ssl=verify_ssl,
         )
     )
 

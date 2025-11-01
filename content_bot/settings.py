@@ -22,12 +22,32 @@ def _require(name: str) -> str:
     return value
 
 
+def _get_bool(name: str, default: bool = False) -> bool:
+    value = os.getenv(name)
+    if value is None:
+        return default
+    return value.strip().lower() in {"1", "true", "yes", "on"}
+
+
+def _get_verify_ssl(name: str) -> bool | str:
+    value = os.getenv(name)
+    if value is None or value.strip() == "":
+        return False
+    normalized = value.strip().lower()
+    if normalized in {"1", "true", "yes", "on"}:
+        return True
+    if normalized in {"0", "false", "no", "off"}:
+        return False
+    return value.strip()
+
+
 @dataclass(frozen=True)
 class Settings:
     telegram_bot_token: str
     gigachat_client_id: str
     gigachat_client_secret: str
     telegram_disable_ssl_verify: bool = False
+    gigachat_verify_ssl: bool | str = False
 
 
 def get_settings() -> Settings:
@@ -38,12 +58,6 @@ def get_settings() -> Settings:
         gigachat_client_id=_require("GIGACHAT_CLIENT_ID"),
         gigachat_client_secret=_require("GIGACHAT_CLIENT_SECRET"),
         telegram_disable_ssl_verify=_get_bool("TELEGRAM_DISABLE_SSL_VERIFY"),
+        gigachat_verify_ssl=_get_verify_ssl("GIGACHAT_VERIFY_SSL"),
     )
-
-
-def _get_bool(name: str, default: bool = False) -> bool:
-    value = os.getenv(name)
-    if value is None:
-        return default
-    return value.strip().lower() in {"1", "true", "yes", "on"}
 
